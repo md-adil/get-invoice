@@ -13,7 +13,9 @@
 </head>
 
 <body>
-<div class="container shadow-container">
+
+<div class="container >
+
     <div class="row">
         <div class="col-md-12">
             <form id="pdf-content">
@@ -21,10 +23,10 @@
                  <div class="top">
                     <h1>Declaration Letter </h1>
                      <div class="image-upload">
-                       <label for="file-input">
-                           <img id="output" src="data:image/png;base64,<?= base64_encode(file_get_contents('download.png')) ?>" />
-                       </label>
-                       <input id="file-input" type="file" accept="image/*" onchange="loadFile(event)">
+                      <label>
+                        <input style="display: none" type="file" accept="image/*" onchange="loadFile(event)">
+                        <img id="output" src="data:image/png;base64,<?= base64_encode(file_get_contents('img/download.png')) ?>" />
+                      </label>
                      </div>  
                 </div>
                 
@@ -64,16 +66,22 @@
     </div>
             
 </div>
-<div class="container"><div class="action">
-        <p> <span onclick="print()">Print</span> <!-- | <span id="cmd" class="link-print"><a href="javascript:demoFromHTML()" class="button">Get PDF</a> --></span>
-        <form action="index.php" class="get-pdf" method="post">
-            <a data-toggle="modal" data-target="#userform-modal">getpdf</a>
-        </form>
+<div class="container">
+<div class="action">
+        <p> <span onclick="print()">Print |  <form action="index.php" class="get-pdf" method="post">
+            <a data-toggle="modal" data-target="#userform-modal">Get PDF</a>
+        </form></span>
+       
         </p>
      </div>
 </div>
-
-<div id="editor"></div>
+<div class="container">
+<div id="footer-bottom">
+      <div contenteditable>
+           <p style= "text-align:center;margin-right: 15px;vertical-align: middle; ">Address :  123 6th St. Melbourne, FL 32904</p>
+     </div>
+</div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.0-beta.1/jquery-ui.min.js"></script>
@@ -82,32 +90,36 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js
 "></script>
 <script type="text/javascript">
-    
-    $(function () {
-
-    var specialElementHandlers = {
-        '#editor': function (element,renderer) {
-            return true;
-        }
-    };
- $('#cmd').click(function () {
-        var doc = new jsPDF();
-        doc.fromHTML($('#target').html(), 15, 15, {
-            'width': 170,'elementHandlers': specialElementHandlers
-        });
-        doc.save('sample-file.pdf');
-    });  
+document.getElementById('output').addEventListener('click', function() {
+  var files = document.getElementById('file').files;
+  if (files.length > 0) {
+    getBase64(files[0]);
+  }
 });
 
+function getBase64(file, fn) {
+   var reader = new FileReader();
+   reader.readAsDataURL(file);
+   reader.onload = function () {
+    fn(reader.result);
+   };
+   reader.onerror = function (error) {
+     console.log('Error: ', error);
+   };
+}
 var loadFile = function(event) {
-        var output = document.getElementById('output');
-        output.src = URL.createObjectURL(event.target.files[0]);
-    };
+      var output = document.getElementById('output');
+      getBase64(event.target.files[0],function(img) {
+        output.src = img;
+      });
+      // output.src = URL.createObjectURL();
+  };
     $('.bnt-submit').click(function(e) {
         var $frm = $('.get-pdf');
         $('<input />', {name:'pdf', type:'hidden'}).val($('#form1').html()).appendTo($frm);
         $frm.get(0).submit();
     });
+
 </script>
 
 
